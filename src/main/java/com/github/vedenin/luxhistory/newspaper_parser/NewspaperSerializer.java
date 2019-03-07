@@ -11,7 +11,7 @@ import java.util.List;
 
 public class NewspaperSerializer
 {
-    private static final String DIR           = "C:\\Work\\opensource\\export01-newspapers1841-1878\\";
+    private static final String DIR           = "/home/slava/programming_new/export01-newspapers1841-1878/";
     private static final String FILE_OUT_NAME = "/data/articles.out";
 
     private final NewspaperParser newspaperParser;
