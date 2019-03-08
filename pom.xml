@@ -12,6 +12,12 @@
         <kotlin.version>1.3.21</kotlin.version>
     </properties>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.5.RELEASE</version>
+    </parent>
+
     <build>
         <plugins>
             <plugin>
@@ -89,6 +95,55 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.vedenin.atoms</groupId>
             <artifactId>annotations</artifactId>
             <version>1.0</version>
@@ -100,23 +155,6 @@
             <version>1.0-guava</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.vedenin.atoms</groupId>
-            <artifactId>atoms-htmlparser</artifactId>
-            <version>0.11-jsoup-draft</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.vedenin.atoms</groupId>
-            <artifactId>atoms-io</artifactId>
-            <version>0.11-default-draft</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.vedenin.atoms</groupId>
-            <artifactId>atoms-strings</artifactId>
-            <version>0.11-default-draft</version>
-        </dependency>
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -149,13 +187,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- base64 -->
         <dependency>
             <groupId>commons-codec</groupId>
@@ -182,6 +213,12 @@
             <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
