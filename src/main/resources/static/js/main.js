@@ -1,11 +1,11 @@
 var app = angular.module("springDemo",[]);
 
 app.controller("AppCtrl", function($scope, $http){
-    $scope.websites = [];
+    $scope.statistics = [];
     $http({
         method: 'GET',
-        url: 'http://localhost:8888/api/stackoverflow'
+        url: 'http://localhost:9200/pop_nouns/_search?pretty=true&q=*:*'
     }).then(function (success){
-        $scope.websites = success.data;
+        $scope.statistics = success.results.hits.hits;
     });
 });
