@@ -67,7 +67,7 @@
                     <td><<{{doc._source.date}}>></td>
                     <td><b>{{doc._source.type}}</b></td>
                     <td>~{{doc._source.language}}~</td>
-                    <td>{{doc._source.description | limitTo: 500}}</td>
+                    <td>{{doc._source.description | limitTo: 1000}}</td>
                 </li>
             </ul>
             <eui-simple-paging></eui-simple-paging>
