@@ -28,7 +28,7 @@ public class NewspaperSpliter {
             final String yearInString =  Integer.toString(year);
             final List<Article> articlesByYear = articles.
                     stream().
-                    filter(a -> a.getData().contains(yearInString)).
+                    filter(a -> a.getDate().contains(yearInString)).
                     collect(Collectors.toList());
             final String newName = resourceName.replaceAll(".out", yearInString + ".out");
             System.out.println(articlesByYear.size());
