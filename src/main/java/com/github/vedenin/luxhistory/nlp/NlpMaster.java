@@ -10,14 +10,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NlpMaster {
+
+    ConcurrentHashMap<String, Integer> nouns = new ConcurrentHashMap<>();
+
+    ConcurrentHashMap<String, Integer> adjectives = new ConcurrentHashMap<>();
 
     public static void main(String ... args) throws IOException {
         String s = detectLanguage("estava em uma marcenaria na Rua Bruno");
         NlpMaster nlpMaster = new NlpMaster();
-        Map<String, Integer> map = nlpMaster.nounPosDetector("Staat in feiner Richtung für Beginn und Fortgang dieses Abenteuers verantwortlich gemacht werben darf, so wird nichts anderes übrig bleiben, als den künftigen Kaiser von Mcrico feinem Schicksale zu überlassen");
-        System.out.println(map);
     }
 
     public static String detectLanguage(String text) throws IOException {
@@ -45,8 +48,7 @@ public class NlpMaster {
         return l.getLang();
     }
 
-    public Map<String, Integer> nounPosDetector(String text) throws IOException {
-        Map<String, Integer> map = new HashMap<>();
+    public void nounPosDetector(String text) throws IOException {
         SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         String[] tokens = tokenizer.tokenize(text);
 
@@ -58,11 +60,42 @@ public class NlpMaster {
 
         for (int i=0;i<tags.length;i++){
             if (tags[i].equals("NNP") || tags[i].equals("NN")){
-                int count = map.getOrDefault(tokens[i], 0);
-                map.put(tokens[i], count + 1);
+                int count = nouns.getOrDefault(tokens[i], 0);
+                nouns.put(tokens[i], count + 1);
             }
         }
-        return map;
-
     }
+
+    public void adjectivePosDetector(String text) throws IOException {
+        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
+        String[] tokens = tokenizer.tokenize(text);
+
+        InputStream inputStreamPOSTagger = getClass()
+                .getResourceAsStream("/nlp/models/de-pos-maxent.bin");
+        POSModel posModel = new POSModel(inputStreamPOSTagger);
+        POSTaggerME posTagger = new POSTaggerME(posModel);
+        String tags[] = posTagger.tag(tokens);
+
+        for (int i=0;i<tags.length;i++){
+            if (tags[i].equals("ADJD") || tags[i].equals("ADJA")){
+                int count = adjectives.getOrDefault(tokens[i], 0);
+                adjectives.put(tokens[i], count + 1);
+            }
+        }
+    }
+
+    public static List topNKeys(final HashMap<String, Integer> map, int n) {
+        PriorityQueue<String> topN = new PriorityQueue<>(n, Comparator.comparingInt(map::get));
+
+        for(String key:map.keySet()){
+            if (topN.size() < n)
+                topN.add(key);
+            else if (map.get(topN.peek()) < map.get(key)) {
+                topN.poll();
+                topN.add(key);
+            }
+        }
+        return (List) Arrays.asList(topN.toArray());
+    }
+
 }
