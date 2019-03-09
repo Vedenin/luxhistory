@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Local Search</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        .searchInput {
+            border-radius:6px;
+            -webkit-border-radius:6px;
+            -moz-border-radius:5px;
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            color: rgba(0,0,0,.87);
+            word-wrap: break-word;
+            outline: none;
+            display: flex;
+            flex: 100%;
+            -webkit-tap-highlight-color: transparent;
+            margin-top: 0px;
+        }
+        .searchButton {
+            border-radius:6px;
+        }
+    </style>
+</head>
+<body>
+<div align="center">
+<form action="#" th:action="@{/}" th:object="${search}" method="post">
+    <p><b>LuxHistory Search</b></p>
+    <p><input class="searchInput" type="text" th:field="*{query}" /></p>
+    <p><input class="searchButton" type="submit" value="Search" /></p>
+</form>
+<p th:text="${search.result}" />
+</div>
+</body>
+</html>
