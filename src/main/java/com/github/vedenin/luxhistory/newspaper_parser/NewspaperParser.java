@@ -28,6 +28,7 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 public class NewspaperParser {
     private static final String TEMPLATE = "/OAI-PMH/ListRecords/record/metadata/*[name()='oai_dc:dc']/";
     private static final String DIR = "C:\\work\\365690\\export01-newspapers1841-1878\\";
+    private final Client client;
 
     private final XPathExpression descriptionExpr;
     private final XPathExpression dateExpr;
@@ -57,6 +58,10 @@ public class NewspaperParser {
 
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();
+        client  = new PreBuiltTransportClient(
+                Settings.builder().put("client.transport.sniff", true)
+                        .put("cluster.name", "elasticsearch").build())
+                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
     }
 
     public List<Article> parseDir(final String dir) throws Exception {
@@ -111,36 +116,38 @@ public class NewspaperParser {
 
         File dir = new File(DIR);
         String[] childs = dir.list();
-
         for (String child : childs) {
-            System.out.println(">>>" + child);
-            final List<Article> articles = parser.parseDir(DIR + File.separator + child);
-
-            Client client = new PreBuiltTransportClient(
-                    Settings.builder().put("client.transport.sniff", true)
-                            .put("cluster.name", "elasticsearch").build())
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
-
-            BulkRequestBuilder bulkRequest = client.prepareBulk();
-
-            for (Article article : articles) {
-                bulkRequest.add(client.prepareIndex("articles", "_doc", article.getId())
-                        .setSource(jsonBuilder()
-                                .startObject()
-                                .field("description", article.getDescription())
-                                .field("date", article.getDate())
-                                .field("url", article.getUrl())
-                                .field("language", article.getLanguage())
-                                .field("type", article.getType())
-                                .endObject()
-                        )
-                );
-            }
-
-            BulkResponse bulkResponse = bulkRequest.get();
-            if (bulkResponse.hasFailures()) {
-                System.out.println("FAIL:" + bulkResponse.buildFailureMessage());
-            }
+            parser.populate(parser, child);
         }
     }
+
+    private void populate(NewspaperParser parser, String child) throws Exception {
+
+        System.out.println(">>>" + child);
+        final List<Article> articles = parser.parseDir(DIR + File.separator + child);
+
+
+
+        BulkRequestBuilder bulkRequest = client.prepareBulk();
+
+        for (Article article : articles) {
+            bulkRequest.add(client.prepareIndex("articles", "_doc", article.getId())
+                    .setSource(jsonBuilder()
+                            .startObject()
+                            .field("description", article.getDescription())
+                            .field("date", article.getDate())
+                            .field("url", article.getUrl())
+                            .field("language", article.getLanguage())
+                            .field("type", article.getType())
+                            .endObject()
+                    ).setPipeline("langdetect-pipeline")
+            );
+        }
+
+        BulkResponse bulkResponse = bulkRequest.get();
+        if (bulkResponse.hasFailures()) {
+            System.out.println("FAIL:" + bulkResponse.buildFailureMessage());
+        }
+    }
+
 }
