@@ -21,10 +21,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="item in statistics">
+                        <tr ng-repeat="item in statistics.hits.hits">
                             <td>{{item._id}}</td>
                             <td>DE</td>
                             <td>{{item._source.de_nounsCount}}</td>
+                        </tr>
+                        <tr ng-repeat="item in statistics.hits.hits">
+                            <td>{{item._id}}</td>
+                            <td>FR</td>
+                            <td>{{item._source.fr_nounsCount}}</td>
                         </tr>
 
                         </tbody>
