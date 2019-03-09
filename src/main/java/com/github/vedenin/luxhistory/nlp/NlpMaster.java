@@ -21,6 +21,8 @@ public class NlpMaster {
     public static void main(String ... args) throws IOException {
         String s = detectLanguage("estava em uma marcenaria na Rua Bruno");
         NlpMaster nlpMaster = new NlpMaster();
+        nlpMaster.nounPosDetector("Marseille. Ce samedi, le rendez-vous est donné à 13h pour les gilets jaunes, qui marcheront ensuite dans la ville. Pour l'heure, le programme de la marche n'est pas connu.", "fr");
+        System.out.println(nlpMaster.nouns);
     }
 
     public static String detectLanguage(String text) throws IOException {
@@ -48,36 +50,50 @@ public class NlpMaster {
         return l.getLang();
     }
 
-    public void nounPosDetector(String text) throws IOException {
+    public void nounPosDetector(String text, String lang) throws IOException {
         SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         String[] tokens = tokenizer.tokenize(text);
 
-        InputStream inputStreamPOSTagger = getClass()
-                .getResourceAsStream("/nlp/models/de-pos-maxent.bin");
+        InputStream inputStreamPOSTagger = null;
+        if (lang.startsWith("de")){
+            inputStreamPOSTagger =  getClass()
+                    .getResourceAsStream("/nlp/models/de-pos-maxent.bin");
+        }
+        else if (lang.startsWith("fr")){
+            inputStreamPOSTagger =  getClass()
+                    .getResourceAsStream("/nlp/models/fr-pos.bin");
+        }
         POSModel posModel = new POSModel(inputStreamPOSTagger);
         POSTaggerME posTagger = new POSTaggerME(posModel);
         String tags[] = posTagger.tag(tokens);
 
         for (int i=0;i<tags.length;i++){
-            if (tags[i].equals("NNP") || tags[i].equals("NN")){
+            if (tags[i].equals("NNP") || tags[i].equals("NN") || tags[i].equals("NPP")){
                 int count = nouns.getOrDefault(tokens[i], 0);
                 nouns.put(tokens[i], count + 1);
             }
         }
     }
 
-    public void adjectivePosDetector(String text) throws IOException {
+    public void adjectivePosDetector(String text, String lang) throws IOException {
         SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
         String[] tokens = tokenizer.tokenize(text);
 
-        InputStream inputStreamPOSTagger = getClass()
-                .getResourceAsStream("/nlp/models/de-pos-maxent.bin");
+        InputStream inputStreamPOSTagger = null;
+        if (lang.startsWith("de")){
+            inputStreamPOSTagger =  getClass()
+                    .getResourceAsStream("/nlp/models/de-pos-maxent.bin");
+        }
+        else if (lang.startsWith("fr")){
+            inputStreamPOSTagger =  getClass()
+                    .getResourceAsStream("/nlp/models/fr-pos.bin");
+        }
         POSModel posModel = new POSModel(inputStreamPOSTagger);
         POSTaggerME posTagger = new POSTaggerME(posModel);
         String tags[] = posTagger.tag(tokens);
 
         for (int i=0;i<tags.length;i++){
-            if (tags[i].equals("ADJD") || tags[i].equals("ADJA")){
+            if (tags[i].startsWith("ADJ")){
                 int count = adjectives.getOrDefault(tokens[i], 0);
                 adjectives.put(tokens[i], count + 1);
             }
